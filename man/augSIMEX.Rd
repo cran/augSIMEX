@@ -99,7 +99,7 @@ other arguments that pass into the function.
 In the case of repeated measurements, the users can pick the one of the measurements into the formula of the main model. If more than one covariates have multiple replicates, the users should name the vector of repeated measurements in the list of \code{repind} by the correspoding representitive measurement in the formula of main model. See example.
 The number of boostrap should be at least 2. i.e. \code{nBoot}>2.
 
-The examples are mainly for illustration purpose. NA's are possibly to be generated. To obtain precise results, we need to set simulation parameters on a larger scale, which also involves more time for computing. 
+The examples are mainly for illustration purpose. NA's are possibly to be generated bacause the bootstrap simulation parameter is only set as 2. To obtain precise results, we need to set simulation parameters on a larger scale, which also involves more time for computing. 
 }
 \value{
 \item{coefficient}{the coefficient of the main model after correction.}

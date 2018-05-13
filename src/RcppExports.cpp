@@ -5,9 +5,21 @@
 
 using namespace Rcpp;
 
+// repeatgenerate
+NumericVector repeatgenerate(NumericMatrix W, double lambda);
+RcppExport SEXP _augSIMEX_repeatgenerate(SEXP WSEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type W(WSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(repeatgenerate(W, lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
 // scorecloglogcpp
 NumericVector scorecloglogcpp(NumericVector beta, NumericVector Y, NumericMatrix DataM, NumericMatrix DataM0, NumericMatrix DataM1, NumericVector phat, NumericVector qhat, NumericVector weight, NumericVector offset);
-RcppExport SEXP augSIMEX_scorecloglogcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
+RcppExport SEXP _augSIMEX_scorecloglogcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -26,7 +38,7 @@ END_RCPP
 }
 // scoregaussiancpp
 NumericVector scoregaussiancpp(NumericVector beta, NumericVector Y, NumericMatrix DataM, NumericMatrix DataM0, NumericMatrix DataM1, NumericVector phat, NumericVector qhat, NumericVector weight, NumericVector offset);
-RcppExport SEXP augSIMEX_scoregaussiancpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
+RcppExport SEXP _augSIMEX_scoregaussiancpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -45,7 +57,7 @@ END_RCPP
 }
 // scorelogitcpp
 NumericVector scorelogitcpp(NumericVector beta, NumericVector Y, NumericMatrix DataM, NumericMatrix DataM0, NumericMatrix DataM1, NumericVector phat, NumericVector qhat, NumericVector weight, NumericVector offset);
-RcppExport SEXP augSIMEX_scorelogitcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
+RcppExport SEXP _augSIMEX_scorelogitcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -64,7 +76,7 @@ END_RCPP
 }
 // scoremofifiedglmcpp
 NumericVector scoremofifiedglmcpp(NumericVector beta, NumericVector Y, NumericMatrix DataM, NumericMatrix DataM0, NumericMatrix DataM1, NumericVector phat, NumericVector qhat, NumericVector weight, Function linkinv, Function var, Function mueta);
-RcppExport SEXP augSIMEX_scoremofifiedglmcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP linkinvSEXP, SEXP varSEXP, SEXP muetaSEXP) {
+RcppExport SEXP _augSIMEX_scoremofifiedglmcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP linkinvSEXP, SEXP varSEXP, SEXP muetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -85,7 +97,7 @@ END_RCPP
 }
 // scorepoilogcpp
 NumericVector scorepoilogcpp(NumericVector beta, NumericVector Y, NumericMatrix DataM, NumericMatrix DataM0, NumericMatrix DataM1, NumericVector phat, NumericVector qhat, NumericVector weight, NumericVector offset);
-RcppExport SEXP augSIMEX_scorepoilogcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
+RcppExport SEXP _augSIMEX_scorepoilogcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -104,7 +116,7 @@ END_RCPP
 }
 // scorepoisqrtcpp
 NumericVector scorepoisqrtcpp(NumericVector beta, NumericVector Y, NumericMatrix DataM, NumericMatrix DataM0, NumericMatrix DataM1, NumericVector phat, NumericVector qhat, NumericVector weight, NumericVector offset);
-RcppExport SEXP augSIMEX_scorepoisqrtcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
+RcppExport SEXP _augSIMEX_scorepoisqrtcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -123,7 +135,7 @@ END_RCPP
 }
 // scoreprobitcpp
 NumericVector scoreprobitcpp(NumericVector beta, NumericVector Y, NumericMatrix DataM, NumericMatrix DataM0, NumericMatrix DataM1, NumericVector phat, NumericVector qhat, NumericVector weight, NumericVector offset);
-RcppExport SEXP augSIMEX_scoreprobitcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
+RcppExport SEXP _augSIMEX_scoreprobitcpp(SEXP betaSEXP, SEXP YSEXP, SEXP DataMSEXP, SEXP DataM0SEXP, SEXP DataM1SEXP, SEXP phatSEXP, SEXP qhatSEXP, SEXP weightSEXP, SEXP offsetSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -142,13 +154,14 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"augSIMEX_scorecloglogcpp", (DL_FUNC) &augSIMEX_scorecloglogcpp, 9},
-    {"augSIMEX_scoregaussiancpp", (DL_FUNC) &augSIMEX_scoregaussiancpp, 9},
-    {"augSIMEX_scorelogitcpp", (DL_FUNC) &augSIMEX_scorelogitcpp, 9},
-    {"augSIMEX_scoremofifiedglmcpp", (DL_FUNC) &augSIMEX_scoremofifiedglmcpp, 11},
-    {"augSIMEX_scorepoilogcpp", (DL_FUNC) &augSIMEX_scorepoilogcpp, 9},
-    {"augSIMEX_scorepoisqrtcpp", (DL_FUNC) &augSIMEX_scorepoisqrtcpp, 9},
-    {"augSIMEX_scoreprobitcpp", (DL_FUNC) &augSIMEX_scoreprobitcpp, 9},
+    {"_augSIMEX_repeatgenerate", (DL_FUNC) &_augSIMEX_repeatgenerate, 2},
+    {"_augSIMEX_scorecloglogcpp", (DL_FUNC) &_augSIMEX_scorecloglogcpp, 9},
+    {"_augSIMEX_scoregaussiancpp", (DL_FUNC) &_augSIMEX_scoregaussiancpp, 9},
+    {"_augSIMEX_scorelogitcpp", (DL_FUNC) &_augSIMEX_scorelogitcpp, 9},
+    {"_augSIMEX_scoremofifiedglmcpp", (DL_FUNC) &_augSIMEX_scoremofifiedglmcpp, 11},
+    {"_augSIMEX_scorepoilogcpp", (DL_FUNC) &_augSIMEX_scorepoilogcpp, 9},
+    {"_augSIMEX_scorepoisqrtcpp", (DL_FUNC) &_augSIMEX_scorepoisqrtcpp, 9},
+    {"_augSIMEX_scoreprobitcpp", (DL_FUNC) &_augSIMEX_scoreprobitcpp, 9},
     {NULL, NULL, 0}
 };
 

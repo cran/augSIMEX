@@ -1,7 +1,17 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-
+// This is a simple example of exporting a C++ function to R. You can
+// source this function into an R session using the Rcpp::sourceCpp 
+// function (or via the Source button on the editor toolbar). Learn
+// more about Rcpp at:
+  //
+  //   http://www.rcpp.org/
+  //   http://adv-r.had.co.nz/Rcpp.html
+//   http://gallery.rcpp.org/
+  //
+  
+  
 
 NumericMatrix scoreglm(NumericVector beta, NumericVector Y, NumericMatrix DataM, NumericVector weight, Function linkinv, Function var, Function mueta) {
     int i,j;
@@ -45,3 +55,17 @@ NumericVector scoremofifiedglmcpp(NumericVector beta, NumericVector Y, NumericMa
 
   return value;
 }
+
+
+// You can include R code blocks in C++ files processed with sourceCpp
+// (useful for testing and development). The R code will be automatically 
+// run after the compilation.
+//
+  
+  /*** R
+  variance <- family$variance
+  linkinv <- family$linkinv
+  mu.eta<-family$mu.eta
+  try<-scoremofifiedglmcpp(c(0,0,0,0),Y,DataM,DataM0,DataM1,phat0,qhat0,rep(1,1000),linkinv,variance,mu.eta)
+ */
+  

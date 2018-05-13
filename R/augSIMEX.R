@@ -120,9 +120,9 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
   if (!all(mis.var %in% colname)) {
     stop("Misspecified variable must be included in the data")
   }
-  # if (!(repeated == FALSE) & !(repeated == TRUE)) {
-  #   stop("Repeated indicator should only be 'TRUE' or 'FALSE'. ")
-  # }
+  if (!(repeated == FALSE) & !(repeated == TRUE)) {
+    stop("Repeated indicator should only be 'TRUE' or 'FALSE'. ")
+  }
   if (!is.null(err.mat)) {
     err.mat = as.matrix(err.mat)
     if (!is.numeric(err.mat) | any(err.mat < 0)) {
@@ -152,7 +152,7 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
   else {
     B = ceiling(B)
   }
-  if (is.null(lambda)) {lambda<-seq(from=0,to=1,length.out=M)}
+  if (is.null(lambda)) {lambda<-seq(from=0,to=2,length.out=M)}
   if (!is.vector(lambda) | !is.numeric(lambda)) {
     stop(":Invalide lambda object")
   }
@@ -162,7 +162,7 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
     lambda <- lambda[lambda >= 0]
   }
 
-  extrapolation<-match.arg(extrapolation)
+  # extrapolation<-match.arg(extrapolation)
 
   ### Step 1: SImulation step
   temp.Results1<-Getalpha(validationdata,pimodel,qimodel,mis.var,mis.true,err.var)
@@ -191,7 +191,7 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
       Sigma_ehat<-cov(Models_res)
     } else Sigma_ehat<-cov(err.mat)
   }
-
+  
   ### change the Xstar in mainCovariates into X, Zstar into Z
   changeindex<-match(err.var,colnames(mainCovariates))
   colnames(mainCovariates)[changeindex]<-err.true
@@ -224,36 +224,19 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
 
       if (any(abs(betasolve$root)>8)) { return(rep(NA,nbeta*2))}
 
-      betab_lam_boot<-matrix(nrow=nBoot,ncol=nbeta)
-
-      for (t in 1:nBoot){
-        sample.boot<-sample(NSam,replace=T)
-        repn<-length(Response[sample.boot])
-        Wboot<-as.matrix(main.new[sample.boot,Wnames])
-        DataM <- cbind(X.impute[sample.boot,],Wboot,main.new[sample.boot,mis.true])
-        DataM0 <- cbind(X.impute[sample.boot,],Wboot,rep(0,repn))
-        DataM1 <- cbind(X.impute[sample.boot,],Wboot,rep(1,repn))
-        
-        if (is.null(scorefunction)){
-          if (cppmethod) {betasolve_boot<-multiroot(scorefun, betasolve$root,Y=Response[sample.boot],DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0[sample.boot],qhat=qhat0[sample.boot],weight=weights,offset=offset)}
-            else {betasolve<-multiroot(scorefun,betasolve$root,Y=Response[sample.boot],DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0[sample.boot],qhat=qhat0[sample.boot],weight=weights,offset=offset,linkinv=linkinv,var=variance,mueta=mu.eta)}
-          } else {betasolve_boot<-multiroot(scorefun, betasolve$root,Y=Response[sample.boot],DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0[sample.boot],qhat=qhat0[sample.boot],weight=weights,offset=offset,sfun=sfun)}
-        if (any(abs(betasolve_boot$root)>8)) betab_lam_boot[t,]<-rep(NA,nbeta) else betab_lam_boot[t,]<-betasolve_boot$root
-      }
-
-      betab_lam_sd<-apply(betab_lam_boot,MARGIN = 2, FUN=var,na.rm=T)
-      return(c(betasolve$root,betab_lam_sd))
+      return(betasolve$root)
     })
-
-
-    betahat_lam_M<-matrix(unlist(betab_lam),ncol=nbeta*2,byrow=T)
+    
+    betahat_lam_M<-matrix(unlist(betab_lam),ncol=nbeta,byrow=T)
     betahat_lam<-colMeans(betahat_lam_M[,1:nbeta],na.rm=T)
-    Omegahat_lam<-colMeans(betahat_lam_M[,nbeta+1:nbeta],na.rm=T)
-    Shat_lam<-apply(betahat_lam_M[,1:nbeta],MARGIN = 2, FUN=var,na.rm=T)
-    return(c(betahat_lam,Omegahat_lam-Shat_lam))
+    return(c(betahat_lam))
   })
 
-  betamatrix<-matrix(unlist(betahat),ncol=nbeta*2,byrow=T)
+  betamatrix<-matrix(unlist(betahat),ncol=nbeta,byrow=T)
+  
+  
+  
+  ###########
   if (extrapolation=="quadratic"){
     extrapomodel<-apply(betamatrix,MARGIN=2, FUN=function(x){
       lambda2<-lambda^2
@@ -261,22 +244,118 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
       newdata<-data.frame(lambda=-1,lambda2=1)
       betaresults<-predict(model,newdata)
     })
+    coefs <- extrapomodel[1:nbeta]
   } else if (extrapolation=="linear"){
     extrapomodel<-apply(betamatrix,MARGIN=2, FUN=function(x){
       model<-lm(x~lambda)
       newdata<-data.frame(lambda=-1)
       betaresults<-predict(model,newdata)
     })
+    coefs <- extrapomodel[1:nbeta]
+  } else if (extrapolation=="both"){
+    extrapomodel1<-apply(betamatrix,MARGIN=2, FUN=function(x){
+      lambda2<-lambda^2
+      model<-lm(x~lambda+lambda2)
+      newdata<-data.frame(lambda=-1,lambda2=1)
+      betaresults<-predict(model,newdata)
+    })
+    
+    extrapomodel2<-apply(betamatrix,MARGIN=2, FUN=function(x){
+      model<-lm(x~lambda)
+      newdata<-data.frame(lambda=-1)
+      betaresults<-predict(model,newdata)
+    })
+    
+    coefs <- c(extrapomodel1[1:nbeta],extrapomodel2[1:nbeta])
   }
 
+  ### bootstrap procedure
+  betahat_boot_all<-lapply(1:nBoot,FUN=function(t){
+
+    sample.boot<-sample(NSam,replace=T)
+    imputeData_boot<-imputeData[sample.boot,]
+    main.new.boot<-main.new[sample.boot,]
+    Wmatrix_b<-main.new.boot[,Wnames]
+    Response_b<-Response[sample.boot]
+    
+    betahat_boot<-lapply(1:M,FUN=function(i){
+      betab_lam<-lapply(1:B,FUN=function(x){
+        X.impute<-imputeX(imputeData_boot,validationdata,err.true,err.var,lambda[i],Sigma_ehat,nsize,repeated,repind)
+        main.new.boot[,err.true]<-X.impute
+        main.new.df<-data.frame(main.new.boot)
+        
+        phat0<-predict(alphahat1,newdata=main.new.df,type="response")
+        qhat0<-predict(alphahat2,newdata=main.new.df,type="response")
+        
+        DataM <- cbind(X.impute,Wmatrix_b,main.new.boot[,mis.true])
+        DataM0 <- cbind(X.impute,Wmatrix_b,rep(0,nsize))
+        DataM1 <- cbind(X.impute,Wmatrix_b,rep(1,nsize))
+        
+        if (is.null(scorefunction)){
+          if (cppmethod) {betasolve<-multiroot(scorefun,rep(0,nbeta),Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot])}
+          else {betasolve<-multiroot(scorefun,rep(0,nbeta),Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot],linkinv=linkinv,var=variance,mueta=mu.eta)}
+        } else {betasolve<-multiroot(scorefun,rep(0,nbeta),Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot],sfun=sfun)}
+        
+        if (any(abs(betasolve$root)>8)) { return(rep(NA,nbeta*2))}
+        
+        return(betasolve$root)
+      })
+      
+      betahat_lam_M<-matrix(unlist(betab_lam),ncol=nbeta,byrow=T)
+      betahat_lam<-colMeans(betahat_lam_M[,1:nbeta],na.rm=T)
+      return(c(betahat_lam))
+    })
+
+    betamatrix_boot<-matrix(unlist(betahat_boot),ncol=nbeta,byrow=T)
+    
+    
+    if (extrapolation=="quadratic"){
+      extrapomodel<-apply(betamatrix_boot,MARGIN=2, FUN=function(x){
+        lambda2<-lambda^2
+        model<-lm(x~lambda+lambda2)
+        newdata<-data.frame(lambda=-1,lambda2=1)
+        betaresults<-predict(model,newdata)
+        coefs <- extrapomodel[1:nbeta]
+      })
+    } else if (extrapolation=="linear"){
+      extrapomodel<-apply(betamatrix_boot,MARGIN=2, FUN=function(x){
+        model<-lm(x~lambda)
+        newdata<-data.frame(lambda=-1)
+        betaresults<-predict(model,newdata)
+        coefs <- extrapomodel[1:nbeta]
+      })
+    } else if (extrapolation=="both"){
+      extrapomodel1<-apply(betamatrix_boot,MARGIN=2, FUN=function(x){
+        lambda2<-lambda^2
+        model<-lm(x~lambda+lambda2)
+        newdata<-data.frame(lambda=-1,lambda2=1)
+        betaresults<-predict(model,newdata)
+      })
+      
+      extrapomodel2<-apply(betamatrix_boot,MARGIN=2, FUN=function(x){
+        model<-lm(x~lambda)
+        newdata<-data.frame(lambda=-1)
+        betaresults<-predict(model,newdata)
+      })
+      coefs <- c(extrapomodel1[1:nbeta],extrapomodel2[1:nbeta])
+    }
+    return(coefs)
+  })
+  
+
+  betahat_boot_all_M<-matrix(unlist(betahat_boot_all),ncol=nbeta*2,byrow=T)
+  sds<-apply(betahat_boot_all_M,MARGIN = 2,FUN=sd, na.rm=T)
+  
+  ### results wrap-up
   good <- weights > 0
+  if (extrapolation=="both") {
+    names(coefs)<-names(sds)<-rep(c(err.true,Wnames,mis.true),2)
+  } else {names(coefs)<-names(sds)<-c(err.true,Wnames,mis.true)}
 
-
-  coefs <- extrapomodel[1:nbeta]
-  sds<-sqrt(extrapomodel[nbeta+1:nbeta])
-  names(coefs)<-c(err.true,Wnames,mis.true)
-  names(sds)<-c(err.true,Wnames,mis.true)
-  colnames(betamatrix)<-c(names(coefs),names(sds))
+  if  (extrapolation=="both") { colnames(betamatrix)<-names(coefs)[1:nbeta]} else{
+  colnames(betamatrix)<-c(names(coefs))}
+  
+  ### evaluate the performance from glm theory
   if (is.null(scorefunction)){
     eta <- drop(mainCovariates[,names(coefs)] %*% t(t(coefs)))
     mu <- linkinv(eta <- eta + offset)
@@ -318,20 +397,19 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
     aic.model <- NA
   }
   
-
-
-
-  if (intercept) {
+  
+  ### Move the intercept in the front of parameters
+  if ((intercept) && (extrapolation!="both")) {
     intindex<-which(names(coefs)=="(Intercept)")
     otherindex<-1:nbeta
     otherindex<-otherindex[-intindex]
     coefs <-coefs[c(intindex,otherindex)]
     sds <-sds[c(intindex,otherindex)]
-    betamatrix<-betamatrix[,c(intindex,otherindex,intindex+nbeta,otherindex+nbeta)]
+    betamatrix<-betamatrix[,c(intindex,otherindex)]
   }
 
 
-  output<-list(coefficients=coefs,
+  output<-list(coefs=coefs,
             se=sds,
             call = call, family=family,
             formula=mainformula, pimodel=pimodel, qimodel=qimodel,
