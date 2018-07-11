@@ -3,7 +3,7 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
                    err.var, mis.var, err.true, mis.true, err.mat = NULL, cppmethod = TRUE,
                    repeated = FALSE, repind = list(),
                    subset,  offset, weights, na.action, scorefunction=NULL,
-                   lambda = NULL, M = 50, B = 200, nBoot = 50, extrapolation = c("quadratic","linear"),...)
+                   lambda = NULL, M = 5, B = 20, nBoot = 50, extrapolation = c("quadratic","linear"),...)
 
 { call <- match.call()
 
@@ -35,8 +35,8 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
     validmu <- unless.null(family$validmu, function(mu) TRUE)
     
     ### check if fast approach available
-    cppmethod<-fastapproach(family)$fast
-    scorefun<-fastapproach(family)$scorefun
+    cppmethod<-fastapproach(family,cppmethod)$fast
+    scorefun<-fastapproach(family,cppmethod)$scorefun
   } else {
     if (is.null(scorefunction)) stop("Family is missing and scorefunction is not specified. ")
     sfun <-scorefunction
@@ -315,15 +315,15 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
         model<-lm(x~lambda+lambda2)
         newdata<-data.frame(lambda=-1,lambda2=1)
         betaresults<-predict(model,newdata)
-        coefs <- extrapomodel[1:nbeta]
       })
+      coefs <- extrapomodel[1:nbeta]
     } else if (extrapolation=="linear"){
       extrapomodel<-apply(betamatrix_boot,MARGIN=2, FUN=function(x){
         model<-lm(x~lambda)
         newdata<-data.frame(lambda=-1)
         betaresults<-predict(model,newdata)
-        coefs <- extrapomodel[1:nbeta]
       })
+      coefs <- extrapomodel[1:nbeta]
     } else if (extrapolation=="both"){
       extrapomodel1<-apply(betamatrix_boot,MARGIN=2, FUN=function(x){
         lambda2<-lambda^2
@@ -342,8 +342,11 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
     return(coefs)
   })
   
-
-  betahat_boot_all_M<-matrix(unlist(betahat_boot_all),ncol=nbeta*2,byrow=T)
+  if (extrapolation=="both"){
+    betahat_boot_all_M<-matrix(unlist(betahat_boot_all),ncol=nbeta*2,byrow=T)
+  } else{
+    betahat_boot_all_M<-matrix(unlist(betahat_boot_all),ncol=nbeta,byrow=T)
+  }
   sds<-apply(betahat_boot_all_M,MARGIN = 2,FUN=sd, na.rm=T)
   
   ### results wrap-up

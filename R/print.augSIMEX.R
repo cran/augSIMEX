@@ -27,27 +27,6 @@ function (x, digits = max(3, getOption("digits") - 3),
     }
     cat("\n")
     
-    # correl <- x$correlation
-    # if(!is.null(correl)) {
-    #   # looks most sensible not to give NAs for undefined coefficients
-    #   #         if(!is.null(aliased) && any(aliased)) {
-    #   #             nc <- length(aliased)
-    #   #             correl <- matrix(NA, nc, nc, dimnames = list(cn, cn))
-    #   #             correl[!aliased, !aliased] <- x$correl
-    #   #         }
-    #   p <- NCOL(correl)
-    #   if(p > 1) {
-    #     cat("\nCorrelation of Coefficients:\n")
-    #     if(is.logical(symbolic.cor) && symbolic.cor) {# NULL < 1.7.0 objects
-    #       print(symnum(correl, abbr.colnames = NULL))
-    #     } else {
-    #       correl <- format(round(correl, 2), nsmall = 2, digits = digits)
-    #       correl[!lower.tri(correl)] <- ""
-    #       print(correl[-1, -p, drop=FALSE], quote = FALSE)
-    #     }
-    #   }
-    # }
-    ##
     cat("\n(Dispersion parameter for ", x$family$family,
         " family taken to be ", format(x$dispersion), ")\n\n",
         apply(cbind(paste(format(c("Null","Residual"), justify="right"),

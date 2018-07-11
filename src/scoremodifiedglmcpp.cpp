@@ -63,9 +63,9 @@ NumericVector scoremofifiedglmcpp(NumericVector beta, NumericVector Y, NumericMa
 //
   
   /*** R
-  variance <- family$variance
-  linkinv <- family$linkinv
-  mu.eta<-family$mu.eta
-  try<-scoremofifiedglmcpp(c(0,0,0,0),Y,DataM,DataM0,DataM1,phat0,qhat0,rep(1,1000),linkinv,variance,mu.eta)
+  # variance <- family$variance
+  #  linkinv <- family$linkinv
+  #  mu.eta<-family$mu.eta
+  #  try<-scoremofifiedglmcpp(c(0,0,0,0),Y,DataM,DataM0,DataM1,phat0,qhat0,rep(1,1000),linkinv,variance,mu.eta)
  */
   

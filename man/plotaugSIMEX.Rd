@@ -19,7 +19,7 @@ plotaugSIMEX(object, variable, extrapolation = c("both", "linear", "quadratic"),
 the ``augSIMEX" object gotten from \code{\link[augSIMEX]{augSIMEX}} function.
 }
   \item{variable}{
- a value or a vector specifying which variable the plot is referred to. It can be the index of the variable in the dataset to be plotted, or it can be the name of the variable.
+ a value or a vector specifying which variable the plot is referred to. It can be the index of the variable in the dataset to be plotted, or it can be the name of the true variable (specified in err.ture).
 }
   \item{extrapolation}{
  the extrapolation methods used in the plot choosing from  ``quadratic'', ``linear'' or ``both''.
@@ -35,7 +35,7 @@ other arguments that are passed into the function.
 }
 }
 \details{
-The user may need to adjust the range of y axis for the best display.
+The user may need to adjust the range of y axis for the proper display.
 }
 \author{
 Qihuang Zhang and Grace Y. Yi.

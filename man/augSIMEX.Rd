@@ -12,7 +12,7 @@ augSIMEX(mainformula = formula(data), pimodel = NULL, qimodel = NULL, meformula 
         err.var, mis.var, err.true, mis.true, err.mat = NULL, cppmethod = TRUE,
         repeated = FALSE, repind = list(),
         subset,  offset, weights, na.action, scorefunction=NULL,
-        lambda = NULL, M = 50, B = 200, nBoot = 50,
+        lambda = NULL, M = 5, B = 20, nBoot = 50,
         extrapolation = c("quadratic","linear"),...)
 }
 \arguments{
@@ -20,13 +20,13 @@ augSIMEX(mainformula = formula(data), pimodel = NULL, qimodel = NULL, meformula 
 an object of class ``formula'': an object of class ``formula'': a symbolic description of the model of the response variable, error-prone covariates, and other covariates.
 }
   \item{pimodel}{
-an object of class ``formula''. A symbolic description in modeling the misclassification rate when binary variable equals to 1. The default choice includes all true covariates in the validation dataset.
+an object of class ``formula''. A symbolic description in modeling the misclassification rate when binary variable equals to 1. The default choice includes all true covariates in the validation dataset. See details for the specification of the model.
 }
   \item{qimodel}{
-an object of class ``formula''. A symbolic description in modeling the misclassification rate when binary variable equals to 0. The default choice includes all true covariates in the validation dataset.
+an object of class ``formula''. A symbolic description in modeling the misclassification rate when binary variable equals to 0. The default choice includes all true covariates in the validation dataset.  See details for the specification of the model.
 }
   \item{meformula}{
-a list of object of ``formula''. A list of formulas specifying the measurement error model for each error-prone covariate. The default choice will be classic additive models.
+a list of object of ``formula''. A list of formulas specifying the measurement error model for each error-prone covariate. The length of the list should equal to the number of error-prone covariates. The default choice will be classic additive models.
 }
   \item{family}{
 an object of class ``family'' (same as in \code{\link[stats]{glm}} function in stats package).
@@ -96,10 +96,13 @@ other arguments that pass into the function.
 }
 }
 \details{
-In the case of repeated measurements, the users can pick the one of the measurements into the formula of the main model. If more than one covariates have multiple replicates, the users should name the vector of repeated measurements in the list of \code{repind} by the correspoding representitive measurement in the formula of main model. See example.
-The number of boostrap should be at least 2. i.e. \code{nBoot}>2.
+The misclassification models are set following the formula format as the main formula. The response should always set be to pi (for pimodel) and qi (for qimodel). See example.
 
-The examples are mainly for illustration purpose. NA's are possibly to be generated bacause the bootstrap simulation parameter is only set as 2. To obtain precise results, we need to set simulation parameters on a larger scale, which also involves more time for computing. 
+In the case of repeated measurements, the users can pick one of the measurements into the formula of the main model. If more than one covariates have multiple replicates, the users should name the vector of repeated measurements in the list of \code{repind} by the correspoding representitive measurement in the formula of main model. See example.
+
+The number of boostrap should be at least 2. i.e., \code{nBoot}>2. Otherwise, error might occur. 
+
+The examples are mainly for illustration purpose. NA's are possibly to be generated bacause the bootstrap simulation parameter is only set as 2. To obtain precise results, simulation parameters are supposed to be set on a larger scale, which also involve more time for computing. 
 }
 \value{
 \item{coefficient}{the coefficient of the main model after correction.}
@@ -128,10 +131,13 @@ Qihuang Zhang and Grace Y. Yi
 \examples{
 ### Example 1: Univariate Case
 data(ToyUni)
-example1<-augSIMEX(mainformula = Y~Xstar+Zstar+W, family = binomial(link=logit),
-         data=ToyUni$Main,validationdata=ToyUni$Validation, subset=NULL,
-         err.var="Xstar", mis.var="Zstar", err.true="X", mis.true="Z", err.mat = NULL,
-         lambda=NULL, M=5, B=2, nBoot=2, extrapolation="quadratic")
+example1<-augSIMEX(mainformula = Y ~ Xstar + Zstar + W, family = binomial(link = logit),
+                   pimodel = pi ~ W, qimodel = qi ~ W, 
+                   meformula = list(Xstar ~ X + Z + W),
+                   data = ToyUni$Main,validationdata = ToyUni$Validation, subset = NULL,
+                   err.var = "Xstar", mis.var = "Zstar", err.true = "X", mis.true = "Z", 
+                   err.mat = NULL,
+                   lambda = NULL, M = 5, B = 2, nBoot = 2, extrapolation="quadratic")
 summary(example1)
 
 ## Without adjustment
@@ -146,7 +152,8 @@ example1_true <- glm(Y~Xstar+Zstar+W, family = binomial(link=logit), data=ToyUni
 data(ToyMult)
 meformula<-list(Xstar.X1~-1+X.X1,Xstar.X2~-1+X.X2)    ## measurement error model
 example2<-augSIMEX(mainformula = Y~Xstar.X1+Xstar.X2+Zstar+W.W1+W.W2, 
-               pimodel=pi~X.X1+X.X2+W.W1+W.W2, qimodel=qi~X.X1+X.X2+W.W1+W.W2, family = binomial,
+               pimodel=pi~X.X1+X.X2+W.W1+W.W2, qimodel=qi~X.X1+X.X2+W.W1+W.W2, 
+               family = binomial,
                data=ToyMult$Main,meformula=meformula,
                validationdata=ToyMult$Validation, subset=NULL,
                err.var=c("Xstar.X1","Xstar.X2"), mis.var="Zstar", err.true=c("X.X1","X.X2"), 
@@ -159,10 +166,12 @@ summary(example2)
 ### Example 3
 data(ToyRepeat)
 example3<-augSIMEX(mainformula = Y~Xstar1+Zstar+W, family = binomial(link=logit),
-            data=ToyRepeat$Main,validationdata=ToyRepeat$Validation, 
-            subset=NULL, err.var="Xstar1", mis.var="Zstar", err.true="X", mis.true="Z", 
-            err.mat = NULL, repeated = TRUE,repind=list(Xstar1=c("Xstar1","Xstar2")),
-            lambda=NULL, M=5, B=2, nBoot=2, extrapolation="quadratic")
+                   pimodel = pi ~ W, qimodel = qi ~ W, 
+                   meformula = list(Xstar ~ X + Z + W),
+                   data=ToyRepeat$Main,validationdata=ToyRepeat$Validation, 
+                   subset=NULL, err.var="Xstar1", mis.var="Zstar", err.true="X", mis.true="Z", 
+                   err.mat = NULL, repeated = TRUE,repind=list(Xstar1=c("Xstar1","Xstar2")),
+                   lambda=NULL, M=5, B=2, nBoot=2, extrapolation="quadratic")
 summary(example3)
 }
 \keyword{funtion}
