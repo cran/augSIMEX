@@ -1,10 +1,10 @@
-f812ebe5b7fccbf07c376fbb52fa1246 *DESCRIPTION
+2e176035253e9480173e9e6e0bcb6039 *DESCRIPTION
 85a498422e38b83b75019a7f5fde47ed *NAMESPACE
 a5c390072c563e528ddd982487142ce6 *R/RcppExports.R
 7c6addcb4bb59c6fa6ea16e2a5ddd4f9 *R/SIMEX_functions.R
 0975a7a5a5771dcfbd2df4e8349731df *R/augSIMEX.R
 b08e4f9a86acd52fad11c2e68bfbc5b8 *R/glmscore.R
-1c54df76f49aaeea289199e8d750eb25 *R/plotaugSIMEX.R
+13d5910692340277b046c739910bc6ca *R/plotaugSIMEX.R
 fbea269bdb8e54d19a2e32266792d862 *R/plotaugSIMEXbottomright.R
 0bd84c4468fb48aea790a2d4f037965e *R/print.augSIMEX.R
 ac01459234ad8e6f98eac13fb11bb2ad *R/summary.augSIMEX.R
@@ -17,7 +17,7 @@ b68a632a8c032f555c7d396a630429ee *data/ToyMult.rda
 b75f4b816ccaab82dc4afaee39169ae1 *man/augSIMEX-package.Rd
 b987525dc322f9273563268098122548 *man/augSIMEX.Rd
 80c7babe1dffb6290366207c3ccf48cc *man/glmscore.Rd
-7fc3dbb14f9971cbcab2f448e7645d52 *man/plotaugSIMEX.Rd
+e9265ed9c1d06321da3f976363079f81 *man/plotaugSIMEX.Rd
 6552e2d9da792d85b6d2ec9a4dd3c53f *man/summary.augSIMEX.Rd
 c1ea479656fab58f9cc61ef69a6f2767 *src/RcppExports.cpp
 03b5eae443abc5203de21a5031b6d0f2 *src/repeatgenerate.cpp

@@ -11,7 +11,7 @@ This function visualizes the extrapolation step. It plots the simulated value fo
 ## S3 method for class 'augSIMEX'
 
 plotaugSIMEX(object, variable, extrapolation = c("both", "linear", "quadratic"),
-       xlim = c(-1.2, 1.2), ylim = c(-3, 3), ...)
+       xlim = c(-1.2, 2.2), ylim = c(-3, 3), ...)
 }
 
 \arguments{

@@ -1,5 +1,5 @@
 plotaugSIMEX<-function(object,variable,extrapolation=c("both","linear","quadratic"),
-                       xlim=c(-1.2,1.2),ylim=c(-3,3),...){
+                       xlim=c(-1.2,2.2),ylim=c(-3,3),...){
   extrapolation<-match.arg(extrapolation)
   p.names <- names(object$coefs)
   nvar<-length(variable)
@@ -24,7 +24,7 @@ plotaugSIMEX<-function(object,variable,extrapolation=c("both","linear","quadrati
         extrapoint.linear<-data.frame(lambda=-1)
         extravalue.linear<-predict(model.linear,extrapoint.linear)
         points(-1,extravalue.linear,col=2,pch = 16)
-        points.linear<-data.frame(lambda=seq(-1.5, 1.2,0.01))
+        points.linear<-data.frame(lambda=seq(-1.5, 2.2,0.01))
         values.linear<-predict(model.linear,points.linear)
         lines(points.linear$lambda,values.linear,col=2,lty=1,lwd=2)
         if (extrapolation=="linear") {
@@ -37,8 +37,8 @@ plotaugSIMEX<-function(object,variable,extrapolation=c("both","linear","quadrati
         extrapoint.quadratic<-data.frame(lambda=-1,lambda2=1)
         extravalue.quadratic<-predict(model.quadratic,extrapoint.quadratic)
         points(-1,extravalue.quadratic,col=4,pch = 16)
-        points.quadratic<-data.frame(lambda=seq(-1.5, 1.2,0.01),
-                                     lambda2=seq(-1.5, 1.2,0.01)^2)
+        points.quadratic<-data.frame(lambda=seq(-1.5, 2.2,0.01),
+                                     lambda2=seq(-1.5, 2.2,0.01)^2)
         values.quadratic<-predict(model.quadratic,points.quadratic)
         lines(points.quadratic$lambda,values.quadratic,col=4,lty=8,lwd=2)
       }
