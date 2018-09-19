@@ -1,7 +1,7 @@
-augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, meformula = NULL, family = gaussian,
+augSIMEX<-function(mainformula = formula(data), mismodel = pi|qi~1, meformula = NULL, family = gaussian,
                    data,validationdata,
                    err.var, mis.var, err.true, mis.true, err.mat = NULL, cppmethod = TRUE,
-                   repeated = FALSE, repind = list(),
+                   repeated = FALSE, repind=list(),
                    subset,  offset, weights, na.action, scorefunction=NULL,
                    lambda = NULL, M = 5, B = 20, nBoot = 50, extrapolation = c("quadratic","linear"),...)
 
@@ -49,17 +49,32 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
   if (missing(weights)) weights<-NULL
   if (missing(offset))  offset<-NULL
 
+  if ((repeated) & (length(repind)==0) ){
+     stop("The repind should be specified for each repeated covariates.")}
 
   ### make data into design matrix
-  if (missing(data)) data <- environment(formula)
+  if (missing(data)) data <- environment(mainformula)
+  if (repeated) {
+    if (!missing(repind)) {
+      for (i in 1:length(names(repind))){
+        if (!names(repind)[i] %in% names(data)) {
+          data<-cbind(data,rep(0,dim(data)[1]))
+          colnames(data)[dim(data)[2]]<-names(repind)[i]}
+        }
+    }
+  }
   mf <- match.call(expand.dots = FALSE)
   m <- match(c("mainformula", "data", "subset","weights", "na.action", "offset"), names(mf), 0L)
   mf <- mf[c(1L, m)]
-  names(mf)[2]<-"formula"
+  if (!repeated) {names(mf)[2]<-"formula"} else {
+    names(mf)[2]<-"formula"
+    mf$data <- data
+  }
   mf$drop.unused.levels <- TRUE
   mf[[1L]] <- quote(stats::model.frame)
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
+  xlevels <- .getXlevels(mt, mf)
   Response <- model.response(mf, "any")
   nsize<-length(Response)
   if (length(dim(nsize)) == 1L) {
@@ -70,6 +85,7 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
   }
   mainCovariates <- if (!is.empty.model(mt))
     model.matrix(mt, mf, contrasts) else matrix(, nsize, 0L)
+  contrasts <- attr(mainCovariates, "contrasts")
   if (all(mainCovariates[,1]==1)) intercept<-TRUE
   weights <- as.vector(model.weights(mf))
   if (!is.null(weights) && !is.numeric(weights))
@@ -86,7 +102,7 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
    else { if (length(weights) != nsize)
      stop(gettextf("number of weights is %d should equal %d (number of observations)",
                        length(weights), nsize), domain = NA)}
-
+  qr <- qr(mainCovariates)
 
   ### rearrange the validationData
   val.covariates<-c(mis.var,err.var,err.true, mis.true)
@@ -164,8 +180,8 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
 
   # extrapolation<-match.arg(extrapolation)
 
-  ### Step 1: SImulation step
-  temp.Results1<-Getalpha(validationdata,pimodel,qimodel,mis.var,mis.true,err.var)
+  ### Step 1: Simulation step
+  temp.Results1<-Getalpha(validationdata,as.Formula(mismodel),mis.var,mis.true,err.var)
   alphahat1<-temp.Results1$alphahat1
   alphahat2<-temp.Results1$alphahat2
 
@@ -174,18 +190,28 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
     if (missing(err.mat)|is.null(err.mat)){
       if (length(meformula)==0) {
       Models_res<-lapply(1:length(err.var),FUN = function(i){
-        model<-lm(validationdata[,err.var[i]]~-1+.,data=data.frame(validationdata[,err.true]))
+        model<-lm(validationdata[,err.var[i]]~-1+offset(validationdata[,err.true[i]]),data=data.frame(validationdata))
         return(model$residuals)
       })} else {
-        if (length(meformula)!=length(err.var)) {stop(gettextf("the length of meformula is %d and should be equal to the number of error-prone covariates %d",
+        meformula = as.Formula(meformula)
+        if (length(meformula)[1]!=length(err.var)) {stop(gettextf("the length of meformula responses (left hand side) is %d and should be equal to the number of error-prone covariates %d",
                                                   length(meformula), length(err.var)), domain = NA)}
-      resname.me<-unlist(lapply(1:length(err.var),FUN = function(i){return(all.vars(meformula[[i]])[1])}))
+      resname.me <- all.vars(meformula)[1:length(meformula)[1]]
+      me.mf <- model.frame(meformula, data = validationdata, na.action = na.omit)
+      
       index<-match(err.var,resname.me)
       if (length(index)!=length(err.var)) {stop("incorrect measurement error model specified")}
-      Models_res<-lapply(index,FUN = function(i){
-          model<-lm(meformula[[i]],data=validationdata)
-          return(model$residuals)
-        })
+      if (length(meformula)[2]==1) {
+          Models_res<-lapply(index,FUN = function(i){
+            model<-lm(formula(meformula,lhs=i,rhs=1),data = me.mf)
+            return(model$residuals)
+          })
+        } else {
+          Models_res<-lapply(index,FUN = function(i){
+            model<-lm(formula(meformula,lhs=i,rhs=i),data = me.mf)
+            return(model$residuals)
+          })
+        }
       }
       Models_res<-matrix(unlist(Models_res),ncol=length(err.var))
       Sigma_ehat<-cov(Models_res)
@@ -202,11 +228,15 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
   Wmatrix<-main.new[,Wnames]
   NSam<-dim(main.new)[1]
   nbeta<-dim(mainCovariates)[2]
-  if (repeated) imputeData<-data else imputeData<-mainCovariates
+  if (repeated) {
+      if (options("na.action")=="na.omit") {
+        completeindex <- complete.cases(data[,! colname %in% unlist(repind)])
+        imputeData <- data[completeindex,] } else imputeData<-data 
+  } else imputeData<-mainCovariates
 
   betahat<-lapply(1:M,FUN=function(i){
     betab_lam<-lapply(1:B,FUN=function(x){
-      X.impute<-imputeX(imputeData,validationdata,err.true,err.var,lambda[i],Sigma_ehat,nsize,repeated,repind)
+      X.impute<-imputeX(imputeData,err.true,err.var,lambda[i],Sigma_ehat,nsize,repeated,repind)
       main.new[,err.true]<-X.impute
       main.new.df<-data.frame(main.new)
 
@@ -234,9 +264,7 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
 
   betamatrix<-matrix(unlist(betahat),ncol=nbeta,byrow=T)
   
-  
-  
-  ###########
+
   if (extrapolation=="quadratic"){
     extrapomodel<-apply(betamatrix,MARGIN=2, FUN=function(x){
       lambda2<-lambda^2
@@ -280,7 +308,8 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
     
     betahat_boot<-lapply(1:M,FUN=function(i){
       betab_lam<-lapply(1:B,FUN=function(x){
-        X.impute<-imputeX(imputeData_boot,validationdata,err.true,err.var,lambda[i],Sigma_ehat,nsize,repeated,repind)
+        X.impute<-imputeX(imputeData_boot,err.true,err.var,lambda[i],Sigma_ehat,nsize,repeated,repind)
+        options(warn=-1)
         main.new.boot[,err.true]<-X.impute
         main.new.df<-data.frame(main.new.boot)
         
@@ -290,6 +319,7 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
         DataM <- cbind(X.impute,Wmatrix_b,main.new.boot[,mis.true])
         DataM0 <- cbind(X.impute,Wmatrix_b,rep(0,nsize))
         DataM1 <- cbind(X.impute,Wmatrix_b,rep(1,nsize))
+        options(warn=0)
         
         if (is.null(scorefunction)){
           if (cppmethod) {betasolve<-multiroot(scorefun,rep(0,nbeta),Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot])}
@@ -297,6 +327,7 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
         } else {betasolve<-multiroot(scorefun,rep(0,nbeta),Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot],sfun=sfun)}
         
         if (any(abs(betasolve$root)>8)) { return(rep(NA,nbeta*2))}
+        
         
         return(betasolve$root)
       })
@@ -344,16 +375,18 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
   
   if (extrapolation=="both"){
     betahat_boot_all_M<-matrix(unlist(betahat_boot_all),ncol=nbeta*2,byrow=T)
+    vcov<-apply(betahat_boot_all_M,MARGIN = 2,FUN=sd, na.rm=T)
   } else{
     betahat_boot_all_M<-matrix(unlist(betahat_boot_all),ncol=nbeta,byrow=T)
+    vcov<-var(betahat_boot_all_M)
   }
-  sds<-apply(betahat_boot_all_M,MARGIN = 2,FUN=sd, na.rm=T)
+  
   
   ### results wrap-up
   good <- weights > 0
   if (extrapolation=="both") {
-    names(coefs)<-names(sds)<-rep(c(err.true,Wnames,mis.true),2)
-  } else {names(coefs)<-names(sds)<-c(err.true,Wnames,mis.true)}
+    names(coefs)<-names(vcov)<-rep(c(err.true,Wnames,mis.true),2)
+  } else {names(coefs)<-names(vcov)<-c(err.true,Wnames,mis.true)}
 
   if  (extrapolation=="both") { colnames(betamatrix)<-names(coefs)[1:nbeta]} else{
   colnames(betamatrix)<-c(names(coefs))}
@@ -403,27 +436,29 @@ augSIMEX<-function(mainformula = formula(data), pimodel = NULL, qimodel = NULL, 
   
   ### Move the intercept in the front of parameters
   if ((intercept) && (extrapolation!="both")) {
-    intindex<-which(names(coefs)=="(Intercept)")
-    otherindex<-1:nbeta
-    otherindex<-otherindex[-intindex]
-    coefs <-coefs[c(intindex,otherindex)]
-    sds <-sds[c(intindex,otherindex)]
-    betamatrix<-betamatrix[,c(intindex,otherindex)]
+    intindex <- which(names(coefs)=="(Intercept)")
+    otherindex <- 1:nbeta
+    otherindex <- otherindex[-intindex]
+    coefs <- coefs[c(intindex,otherindex)]
+    vcov <- vcov[c(intindex,otherindex),c(intindex,otherindex)]
+    betamatrix <- betamatrix[,c(intindex,otherindex)]
   }
 
 
-  output<-list(coefs=coefs,
-            se=sds,
-            call = call, family=family,
-            formula=mainformula, pimodel=pimodel, qimodel=qimodel,
-            err.var=err.var, mis.var=mis.var, err.true=err.true, mis.true=mis.true, err.mat=err.mat,
-            M=M, B=B, nBoot=nBoot, extrapolation=extrapolation,
-            lambda=lambda,coefmatrix=betamatrix,linear.predictors = eta, deviance = dev, aic = aic.model,
-            null.deviance = nulldev, df.residual = resdf, df.null = nulldf,residuals=residuals,
-            rank=rank)
+  output<-list(coefficients = coefs,
+            vcov = vcov, fitted.values = mu,
+            call = call, family = family,
+            formula = mainformula, mismodel = mismodel, terms = mt,
+            err.var = err.var, mis.var = mis.var, err.true = err.true, mis.true = mis.true, err.mat = err.mat,
+            M = M, B = B, nBoot = nBoot, extrapolation = extrapolation, weights = weights,
+            lambda = lambda, coefmatrix = betamatrix, linear.predictors = eta, deviance = dev, aic = aic.model,
+            rank = rank, null.deviance = nulldev, df.residual = resdf, df.null = nulldf, residuals = residuals, 
+            qr = qr, x = mainCovariates, y = Response, model = mf, contrasts = contrasts, xlevels = xlevels)
 
   class(output)<- "augSIMEX"
 
   return(output)
 
 }
+
+

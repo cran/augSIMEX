@@ -15,13 +15,13 @@ summary.augSIMEX <-function (object, dispersion=NULL,...)
     NaN
   }
   
-  ans$aliased <- is.na(object$coefs)
+  ans$aliased <- is.na(object$coefficients)
   
-  p.names <- names(object$coefs)
-  est <- object$coefs
+  p.names <- names(object$coefficients)
+  est <- object$coefficients
   est.table <- list()
   
-  se <- object$se
+  se <- sqrt(diag(object$vcov))
   tvalue <-est/se
   pvalue<- 2 * pnorm(-abs(tvalue))
   est.table <- cbind(est, se, tvalue, pvalue)

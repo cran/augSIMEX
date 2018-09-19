@@ -1,4 +1,4 @@
-print.augSIMEX <-
+print.summary.augSIMEX <-
 function (x, digits = max(3, getOption("digits") - 3), 
           signif.stars = getOption("show.signif.stars"), ...) 
 {   
@@ -11,16 +11,25 @@ function (x, digits = max(3, getOption("digits") - 3),
     cat("\nNumber of simulations: ", x$B, sep = "")
     cat("\nNumber of iterations in bootstrap: ", x$nBoot, "\n\n", sep = "")
     
-    if(length(x$coefficients) == 0L) {
+    if(length(x$aliased) == 0L) {
       cat("\nNo Coefficients\n")
     } else {
       cat("\nCoefficients:\n")
       coefs <- x$coefficients
-      print(coefs)
+      if(!is.null(aliased <- x$aliased) && any(aliased)) {
+        cn <- names(aliased)
+        coefs <- matrix(NA, length(aliased), 4L,
+                        dimnames=list(cn, colnames(coefs)))
+        coefs[!aliased, ] <- x$coefficients
+      }
+      printCoefmat(coefs, digits=digits, signif.stars=signif.stars,
+                   na.print="NA", ...)
     }
     cat("\n")
     
-    cat(apply(cbind(paste(format(c("Null","Residual"), justify="right"),
+    cat("\n(Dispersion parameter for ", x$family$family,
+        " family taken to be ", format(x$dispersion), ")\n\n",
+        apply(cbind(paste(format(c("Null","Residual"), justify="right"),
                           "deviance:"),
                     format(unlist(x[c("null.deviance","deviance")]),
                            digits = max(5L, digits + 1L)), " on",
@@ -32,4 +41,5 @@ function (x, digits = max(3, getOption("digits") - 3),
     ##
     cat("\n")
     invisible(x)
+
 }

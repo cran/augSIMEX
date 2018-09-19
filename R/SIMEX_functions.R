@@ -16,21 +16,34 @@ fastapproach<-function(family,cpp){
   return(list(scorefun=score.modifiedglm,fast=FALSE))
 }
 
-Getalpha<-function(ValidationData,pimodel=NULL,qimodel=NULL,mis.var,mis.true,err.var){
+Getalpha<-function(ValidationData,mismodel=NULL,mis.var,mis.true,err.var){
+  if (length(mismodel)[1]!=2) stop("The number of responses in misclassification model is incorrect. Use | to seperate responses.")
+  if (length(mismodel)[2]>2) stop("The number of responses model should not be greater than 2.")
+  repsname <- all.vars(mismodel)[1:2]
+  if (!all(repsname %in% c("qi","pi"))) stop("The specification of reponse in misclassification should be pi and qi.")
+  if (length(mismodel)[2]==1){
+    for (i in 1:2){
+      if (repsname[i]=="pi") {pimodel<- formula(mismodel,lhs=i,rhs=1)}
+       else {qimodel<- formula(mismodel,lhs=i,rhs=1)}
+    }
+  } else {
+    for (i in 1:2){
+      if (repsname[i]=="pi") {pimodel<- formula(mismodel,lhs=i,rhs=i)}
+      else {qimodel<- formula(mismodel,lhs=i,rhs=i)}
+    }
+  }
+  
   ValidationZ1<-ValidationData[ValidationData[,mis.true]==1,]
   ValidationZ1.data<-data.frame(pi=1-(ValidationZ1[,mis.var]==ValidationZ1[,mis.true])*1,ValidationZ1)
-  ValidationZ0<-ValidationData[ValidationData$Z==0,]
+  ValidationZ0<-ValidationData[ValidationData[,mis.true]==0,]
   ValidationZ0.data<-data.frame(qi=1-(ValidationZ0[,mis.var]==ValidationZ0[,mis.true])*1,ValidationZ0)
-  
-  if (is.null(pimodel)) {pimodel<-formula(ValidationZ1.data[!colnames(ValidationZ1.data) %in% c(err.var,mis.true,mis.var)])}
-  if (is.null(qimodel)) {qimodel<-formula(ValidationZ0.data[!colnames(ValidationZ0.data) %in% c(err.var,mis.true,mis.var)])}
   
   alphahat1<-glm(pimodel,family=binomial,data=ValidationZ1.data)
   alphahat2<-glm(qimodel,family=binomial,data=ValidationZ0.data)
   return(list(alphahat1=alphahat1,alphahat2=alphahat2))
 }
 
-imputeX<-function(maindata,ValidationData,err.true,err.var,lambda,Sigma_ehat,nsize,repeated,repind){
+imputeX<-function(maindata,err.true,err.var,lambda,Sigma_ehat,nsize,repeated,repind){
   if (!repeated){
   e_ib<-mvrnorm(n=nsize,mu=rep(0,length=dim(Sigma_ehat)[1]),Sigma=Sigma_ehat)
     return(as.matrix(maindata[,err.true])+e_ib*sqrt(lambda))} else {

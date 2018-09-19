@@ -1,7 +1,8 @@
-plotaugSIMEX<-function(object,variable,extrapolation=c("both","linear","quadratic"),
-                       xlim=c(-1.2,2.2),ylim=c(-3,3),...){
-  extrapolation<-match.arg(extrapolation)
-  p.names <- names(object$coefs)
+plot.augSIMEX<-function(x, ...){
+  extrapolation<-"both"
+  xlim=c(-1.2,2.2)
+  p.names <- names(x$coefficients)
+  variable = x$err.true
   nvar<-length(variable)
   ### if the user give the input of the who variable directly
   if (nvar>length(p.names)) {
@@ -12,13 +13,13 @@ plotaugSIMEX<-function(object,variable,extrapolation=c("both","linear","quadrati
     if (nvar==1){
     index<-which(p.names==variable)
     } else index<-unlist(lapply(1:nvar,FUN = function(i){which(p.names[i]==variable)}))
-  }else index<-variable 
+  } else index<-variable 
   
   for (ii in index){
-      betas<-object$coefmatrix[,ii]
-      lambda<-object$lambda
+      betas<-x$coefmatrix[,ii]
+      lambda<-x$lambda
       plot(lambda,betas,
-           xlab="lambda", ylab="Estimated Coefficient",xlim=xlim, ylim=ylim,...)
+           xlab="lambda", ylab="Estimated Coefficient",xlim=xlim,...)
       if (extrapolation=="linear"|extrapolation=="both"){
         model.linear <- lm(betas~lambda)
         extrapoint.linear<-data.frame(lambda=-1)

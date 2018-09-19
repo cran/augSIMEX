@@ -4,7 +4,7 @@
 Score Value in Generalized Linear Model
 }
 \description{
-This function can be used to calculate the value of score function. This function can serve as a tool to assist the user in debugging their self-defined score function.
+This function can be used to calculate the value of score function. This function can serve as a tool to assist the users in debugging their self-defined score function.
 }
 \usage{
 glmscore(beta, Y, data, weight, offset, family)
