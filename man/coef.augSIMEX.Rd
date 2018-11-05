@@ -5,7 +5,7 @@
 Extract the coefficients from the fitted augSIMEX object
 }
 \description{
-This function return the vector of fitted coefficients from a fitted augSIMEX object
+This function returns the vector of fitted coefficients from a fitted augSIMEX object
 }
 \usage{
 ## S3 method for class 'augSIMEX'

@@ -5,7 +5,7 @@
 Predict Method for the model fits by augSIMEX
 }
 \description{
-This function returns the predictions and optionally estimates the standard erros of the predictions from a fitted augSIMEX object.
+This function returns the predictions and optionally estimates the standard errors of the predictions from a fitted augSIMEX object.
 }
 \usage{
 ## S3 method for class 'augSIMEX'

@@ -3,7 +3,7 @@
 \alias{GeneRepeat}
 \title{Example data for univariate error-prone covariates in repeated measurements case}
 \description{
- This data set gives an example data for the illustration of usage of \code{\link{augSIMEX}} function. The data set is adapted from the outbred Carworth Farms White mice data (Parker et. al., 2016). The dataset contains main data and validation data. We are interested to study the association between the response genotype of rs223979909 and the locomotor reponse to methamphetamine injections, which is subject to mismeasurement. 
+ This dataset gives an example data for the illustration of usage of \code{\link{augSIMEX}} function. The data set is adapted from the outbred Carworth Farms White mice data (Parker et. al., 2016). The dataset contains main data and validation data. We are interested to study the association between the response genotype of rs223979909 and the locomotor response to methamphetamine injections, which is subject to mismeasurement. 
   
   Tibia_5 - Tibia_30: the repeated measurement of tibia length
   Tibia_M: the error-prone measurement of tibia length

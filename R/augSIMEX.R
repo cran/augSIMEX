@@ -263,40 +263,8 @@ augSIMEX<-function(mainformula = formula(data), mismodel = pi|qi~1, meformula = 
   })
 
   betamatrix<-matrix(unlist(betahat),ncol=nbeta,byrow=T)
+  coefs <- extrapolate(extrapolation,betamatrix,lambda,nbeta)
   
-
-  if (extrapolation=="quadratic"){
-    extrapomodel<-apply(betamatrix,MARGIN=2, FUN=function(x){
-      lambda2<-lambda^2
-      model<-lm(x~lambda+lambda2)
-      newdata<-data.frame(lambda=-1,lambda2=1)
-      betaresults<-predict(model,newdata)
-    })
-    coefs <- extrapomodel[1:nbeta]
-  } else if (extrapolation=="linear"){
-    extrapomodel<-apply(betamatrix,MARGIN=2, FUN=function(x){
-      model<-lm(x~lambda)
-      newdata<-data.frame(lambda=-1)
-      betaresults<-predict(model,newdata)
-    })
-    coefs <- extrapomodel[1:nbeta]
-  } else if (extrapolation=="both"){
-    extrapomodel1<-apply(betamatrix,MARGIN=2, FUN=function(x){
-      lambda2<-lambda^2
-      model<-lm(x~lambda+lambda2)
-      newdata<-data.frame(lambda=-1,lambda2=1)
-      betaresults<-predict(model,newdata)
-    })
-    
-    extrapomodel2<-apply(betamatrix,MARGIN=2, FUN=function(x){
-      model<-lm(x~lambda)
-      newdata<-data.frame(lambda=-1)
-      betaresults<-predict(model,newdata)
-    })
-    
-    coefs <- c(extrapomodel1[1:nbeta],extrapomodel2[1:nbeta])
-  }
-
   ### bootstrap procedure
   betahat_boot_all<-lapply(1:nBoot,FUN=function(t){
 
@@ -338,38 +306,8 @@ augSIMEX<-function(mainformula = formula(data), mismodel = pi|qi~1, meformula = 
     })
 
     betamatrix_boot<-matrix(unlist(betahat_boot),ncol=nbeta,byrow=T)
-    
-    
-    if (extrapolation=="quadratic"){
-      extrapomodel<-apply(betamatrix_boot,MARGIN=2, FUN=function(x){
-        lambda2<-lambda^2
-        model<-lm(x~lambda+lambda2)
-        newdata<-data.frame(lambda=-1,lambda2=1)
-        betaresults<-predict(model,newdata)
-      })
-      coefs <- extrapomodel[1:nbeta]
-    } else if (extrapolation=="linear"){
-      extrapomodel<-apply(betamatrix_boot,MARGIN=2, FUN=function(x){
-        model<-lm(x~lambda)
-        newdata<-data.frame(lambda=-1)
-        betaresults<-predict(model,newdata)
-      })
-      coefs <- extrapomodel[1:nbeta]
-    } else if (extrapolation=="both"){
-      extrapomodel1<-apply(betamatrix_boot,MARGIN=2, FUN=function(x){
-        lambda2<-lambda^2
-        model<-lm(x~lambda+lambda2)
-        newdata<-data.frame(lambda=-1,lambda2=1)
-        betaresults<-predict(model,newdata)
-      })
-      
-      extrapomodel2<-apply(betamatrix_boot,MARGIN=2, FUN=function(x){
-        model<-lm(x~lambda)
-        newdata<-data.frame(lambda=-1)
-        betaresults<-predict(model,newdata)
-      })
-      coefs <- c(extrapomodel1[1:nbeta],extrapomodel2[1:nbeta])
-    }
+    coefs <- extrapolate(extrapolation,betamatrix_boot,lambda,nbeta)
+     
     return(coefs)
   })
   

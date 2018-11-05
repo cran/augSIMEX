@@ -2,8 +2,8 @@ Package: augSIMEX
 Type: Package
 Title: Analysis of Data with Mixed Measurement Error and
         Misclassification in Covariates
-Version: 3.0
-Date: 2018-09-04
+Version: 3.1
+Date: 2018-11-04
 Author: Qihuang Zhang <qihuang.zhang@uwaterloo.ca>, Grace Y. Yi <yyi@uwaterloo.ca>
 Maintainer: Qihuang Zhang <qihuang.zhang@uwaterloo.ca>
 Description: Implementation of the augmented
@@ -15,6 +15,6 @@ License: GPL (>= 2)
 Imports: Rcpp (>= 0.12.11), MASS, rootSolve, stats, graphics, Formula
 LinkingTo: Rcpp
 NeedsCompilation: yes
-Packaged: 2018-09-19 03:51:40 UTC; Qihuang
+Packaged: 2018-11-05 19:40:00 UTC; Qihuang
 Repository: CRAN
-Date/Publication: 2018-09-19 05:50:11 UTC
+Date/Publication: 2018-11-05 20:00:07 UTC

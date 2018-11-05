@@ -30,21 +30,6 @@ The function provides summary output similar to \code{\link[stats]{glm}}.
 \value{
 \item{coefficients}{the matrix of coefficients, standard errors, z-values and p-values.}
 \item{dispersion}{the component from arguments of the function}
-\item{call}{the component from \code{object}}
-\item{family}{the component from \code{object}}
-\item{deviance}{the component from \code{object}}
-\item{aic}{the component from \code{object}}
-\item{df.residual}{the component from \code{object}}
-\item{null.deviance}{the component from \code{object}}
-\item{df.null}{the component from \code{object}}
-\item{extrapolation}{the component from \code{object}}
-\item{err.var}{the component from \code{object}}
-\item{mis.var}{the component from \code{object}}
-\item{err.true}{the component from \code{object}}
-\item{mis.true}{the component from \code{object}}
-\item{B}{the component from \code{object}}
-\item{mis.true}{the component from \code{object}}
-\item{nBoot}{the component from \code{object}}
 }
 
 \author{

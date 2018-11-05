@@ -50,18 +50,12 @@ NumericVector scorelogitcpp(NumericVector beta, NumericVector Y, NumericMatrix D
     value(j)=0;
     for(i = 0; i < nrow; ++i){
       value(j)+=((1-DataM(i,ncol-1))*(scorez0(i,j)*(1-phat(i))-scorez1(i,j)*qhat(i))-DataM(i,ncol-1)*(scorez0(i,j)*phat(i)-scorez1(i,j)*(1-qhat(i))))/(1-phat(i)-qhat(i));
-      // value(j)+=((1)*(scorez0(i,j)*(1)-scorez1(i,j)*1)-1*(scorez0(i,j)*1-scorez1(i,j)*(1-1)))/(1-1-1);
     }
   }
 
   return value;
 }
 
-
-// You can include R code blocks in C++ files processed with sourceCpp
-// (useful for testing and development). The R code will be automatically 
-// run after the compilation.
-//
 
 /*** R
 

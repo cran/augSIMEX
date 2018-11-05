@@ -5,7 +5,7 @@
 Plot of Extrapolation
 }
 \description{
-This function visualizes the extrapolation step. It plots the simulated value for each lambda value and the curve of extrapolation. The function can provide the plots for both methods simultaneously, and guides the user to choose proper extrapolation method. 
+This function visualizes the extrapolation step. It plots the simulated value for each lambda value and the curve of extrapolation. The function provide the plots for both methods simultaneously, and guides the user to choose a proper extrapolation method. 
 }
 \usage{
 ## S3 method for class 'augSIMEX'
@@ -22,7 +22,7 @@ other arguments that are passed into the function.
 }
 }
 \details{
-The user may need to adjust the range of y axis for the proper display.
+The user may need to adjust the range of y axis for a proper display.
 }
 \author{
 Qihuang Zhang and Grace Y. Yi.

@@ -35,7 +35,7 @@ glmscore(beta, Y, data, weight, offset, family)
 \details{
 In a general setting, Y can be treated as a response and data as covariates. 
 
-In the score function debugging setting in \code{augSIMEX}, however, the data need to be specially arranged such that the score output can be successfully passed into \code{augSIMEX} function in a correct order. The data should be a matrix or data frame of a combination with error-prone covariates (in the order of \code{err.var} as in \code{\link[augSIMEX]{augSIMEX}}), other covariates and binary variable that is prone to misclassification. The intercept, if considered, should be included the category of ``other covariates''.
+This function helps to debug the user specified score function. The data are needed to be specially arranged such that the score function output can be successfully passed into \code{augSIMEX} function in a correct order. The data should be a matrix or data frame of a combination with error-prone covariates (in the order of \code{err.var} as in \code{\link[augSIMEX]{augSIMEX}}), other covariates and binary variable that is prone to misclassification. The intercept, if considered, should be included the category of ``other covariates''.
 }
 \value{
 A matrix of n times m, where n is the number of observations and m is the number of parameters. Each entry in the matrix represents the calculated score value for subject \eqn{i} on parameter \eqn{j}. The vector of row sum will be the score value vector.

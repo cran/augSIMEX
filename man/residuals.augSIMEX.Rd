@@ -5,7 +5,7 @@
 Residuals of the Fits Made by augSIMEX
 }
 \description{
-This function output the residuals from a fitted augSIMEX object.
+This function outputs the residuals from a fitted augSIMEX object.
 }
 \usage{
 ## S3 method for class 'augSIMEX'
@@ -19,7 +19,7 @@ This function output the residuals from a fitted augSIMEX object.
 the ``augSIMEX" object gotten from \code{\link[augSIMEX]{augSIMEX}} function.
 }
   \item{type}{
-a character specifying what type of residuals to be returned. The option includes the deviance, pearson, working, response and partial.
+a character specifying what type of residuals to be returned. The option includes the deviance, Pearson, working, response and partial.
 }
   \item{\dots}{
 other arguments that are passed into the function.

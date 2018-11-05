@@ -5,11 +5,10 @@
   R package for Analysis of Data with Mixed Measurement Error and Misclassification in Covariates
 }
 \description{
-Implementation of the SIMEX algorithm for data with mixed measurement error and misclassification
-in covariates. The package is allowing for both parametric SIMEX and empirical SIMEX.
+Implementation of the augmented SIMEX algorithm for data with mixed measurement error and misclassification in covariates. The package is allowing for both parametric SIMEX and empirical SIMEX.
 }
 \details{
-  The \code{SIMEX} package implements the method developed by Yi et al. (2015) to adjust for both measurement error and misclassification in the generalized linear models. The main function is \code{\link[augSIMEX]{augSIMEX}} which returns an "augSIMEX" object. The user can summarize the returned augSIMEX object in a similar format as in \code{\link[stats]{glm}}. The extrapolation can also be visualized through \code{plot} function. 
+  The \code{SIMEX} package implements the method developed by Yi et al. (2015) to adjust for both measurement error and misclassification in the generalized linear models. The main function is \code{\link[augSIMEX]{augSIMEX}} which returns an "augSIMEX" object. The user can summarize the returned augSIMEX object in a similar format as in \code{\link[stats]{glm}}. The extrapolation can also be visualized through \code{plot} function. Other implementation tools are also provided in the package.
 }
 \author{
 Qihuang Zhang and Grace Y. Yi.

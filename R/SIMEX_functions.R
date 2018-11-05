@@ -1,3 +1,41 @@
+extrapolate <- function (extrapolation,betamatrix,lambda,nbeta){
+  if (extrapolation=="quadratic"){
+    extrapomodel<-apply(betamatrix,MARGIN=2, FUN=function(x){
+      lambda2<-lambda^2
+      model<-lm(x~lambda+lambda2)
+      newdata<-data.frame(lambda=-1,lambda2=1)
+      betaresults<-predict(model,newdata)
+    })
+    coefs <- extrapomodel[1:nbeta]
+  } else if (extrapolation=="linear"){
+    extrapomodel<-apply(betamatrix,MARGIN=2, FUN=function(x){
+      model<-lm(x~lambda)
+      newdata<-data.frame(lambda=-1)
+      betaresults<-predict(model,newdata)
+    })
+    coefs <- extrapomodel[1:nbeta]
+  } else if (extrapolation=="both"){
+    extrapomodel1<-apply(betamatrix,MARGIN=2, FUN=function(x){
+      lambda2<-lambda^2
+      model<-lm(x~lambda+lambda2)
+      newdata<-data.frame(lambda=-1,lambda2=1)
+      betaresults<-predict(model,newdata)
+    })
+    
+    extrapomodel2<-apply(betamatrix,MARGIN=2, FUN=function(x){
+      model<-lm(x~lambda)
+      newdata<-data.frame(lambda=-1)
+      betaresults<-predict(model,newdata)
+    })
+    
+    coefs <- c(extrapomodel1[1:nbeta],extrapomodel2[1:nbeta])
+  }
+  
+  return(coefs)
+}
+  
+
+
 fastapproach<-function(family,cpp){
   if (missing(family)) return(list(scorefun=score.modifieduser,fast=cpp))
   if (cpp==TRUE){

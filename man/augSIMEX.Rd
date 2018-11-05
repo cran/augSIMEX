@@ -22,7 +22,7 @@ an object of class ``formula'': an object of class ``formula'': a symbolic descr
 an object of class ``Formula''. A symbolic description in modeling the misclassification rates. See details for the specification of the model.
 }
   \item{meformula}{
-an object of ``Formula'' specifying the measurement error model for each error-prone covariate. The number of responses should equal to the number of error-prone covariates. The default choice will be classic additive models. See details for the specification of the model.
+an object of ``Formula'' specifying the measurement error model for each error-prone covariate. The number of responses should equal the number of error-prone covariates. The default choice will be classic additive models. See details for the specification of the model.
 }
   \item{family}{
 an object of class ``family'' (same as in \code{\link[stats]{glm}} function in stats package).
@@ -40,7 +40,7 @@ a vector of character specifying the name of covariates that are subject to meas
 a string specifying the variable name of the binary variable subject to misclassification.
 }
   \item{err.true}{
-a vector of character specifying the names of the all the counterparts of \code{err.var} that are precisely measure covariates. 
+a vector of character specifying the names of the all the counterparts of \code{err.var} that are precisely measured covariates. 
 }
   \item{mis.true}{
 a string specifying the variable name of the precisely measured binary variable.
@@ -49,7 +49,7 @@ a string specifying the variable name of the precisely measured binary variable.
 a matrix indicating the variance-covariance matrix of generated Normal distribution in simulation step. 
 }
   \item{cppmethod}{
-a logical value indicating whether solving the score function via C++ function. The function involves \code{Rcpp} package. The C++ based method is much faster and more computationally efficient than the R based method. See discussion section.
+a logical value indicating whether solving the score function via C++ functions. The function involves \code{Rcpp} package. The C++ based method is much faster and more computationally efficient than the R based method. See the discussion section.
 }
  \item{repeated}{
 a logic value indicating whether repeated measurements are involved.
@@ -74,7 +74,7 @@ a function indicating what method should be applied to deal with missing data.
 a function of score function. To allow for the generality, the users can specify their own score function. It should be a function of parameters, response, covariates, weights and offset. A matrix of score value for each individual and each parameter should be returned in the function. An example is shown in \code{\link{glmscore}}
 }
   \item{lambda}{
-if \code{M} value is not specified, the user can specify a positive sequence of lambda directly. The first element is ususally set to be 0.
+if the \code{M} value is not specified, the user can specify a positive sequence of lambda directly. The first element is usually set to be 0.
 }
   \item{M}{
 the number of predetermined lambda vector if \code{lambda} is missing. The default is chosen to be 50.
@@ -93,15 +93,15 @@ other arguments that pass into the function.
 }
 }
 \details{
-The misclassification models are set in "Formula" format where the misclassification rates for both class of binary variable is set simultanuously. The left hand side sets the responses of the misclassfication model. The response should always set be to pi (indicating pimodel) and qi (indicating qimodel), seperated by "|". On the right hand side of the formula sets the covariates of the misclassification model. If the covariates for both model are different, use "|" to seperate them in the same order as the response. See example.
+The misclassification models are set in "Formula" format, where the misclassification rates for both classes of the binary variable is set simultaneously. The left-hand side sets the responses of the misclassification model. The response should always set be to pi (indicating pimodel) and qi (indicating qimodel), separated by "|". On the right hand side of the formula sets the covariates of the misclassification model. If the covariates for both models are different, use "|" to separate them in the same order as the response. See example.
 
-The measurement error models are also set in "Formula" format. The left hands side sets the responses of the measurement error model, which should be inconsistant with the specification of \code{err.var}. Each response is seperated by "|". On the right hand side of the formula, the covariates are set. If the covariates for each response are different, use "|" to seperate the sepecification of covariates and the order should corresponds to that of the responses of the measurement error model. See example.
+The measurement error models are also set in "Formula" format. The left-hand side sets the responses of the measurement error model, which should be consistent with the specification of \code{err.var}. Each response is separated by "|". On the right-hand side of the formula, the covariates are set. If the covariates for each response are different, use "|" to separate the specifications of covariates and the order should correspond to that of the responses of the measurement error model. See example.
 
-In the case of repeated measurements, the users can pick one of the measurements into the formula of the main model. If more than one covariates have multiple replicates, the users should name the vector of repeated measurements in the list of \code{repind} by the correspoding representitive measurement in the formula of main model. See example.
+In the case of repeated measurements, the users can pick one of the measurements into the formula of the main model. If more than one covariates have multiple replicates, the users should name the vector of repeated measurements in the list of \code{repind} by the corresponding representative measurement in the formula of the main model. See example.
 
-The number of boostrap should be at least 2. i.e., \code{nBoot}>2. Otherwise, error might occur. 
+The number of bootstrap repetitions should be at least 2. i.e., \code{nBoot}>2. Otherwise, an error might occur. 
 
-The examples are mainly for illustration purpose. NA's are possibly to be generated bacause the bootstrap simulation parameter is only set as 2. To obtain precise results, simulation parameters are supposed to be set on a larger scale, which also involve more time for computing. 
+The examples are mainly for illustration purpose. NA's are possible to be generated because the bootstrap simulation parameter is only set as 2. To obtain precise results, simulation parameters are supposed to be set on a larger scale, which also involves more time for computing. 
 }
 \value{
 \item{coefficients}{the coefficient of the main model after correction.}

@@ -5,7 +5,7 @@
 Extract the likelihood from the fitted augSIMEX object
 }
 \description{
-This function output the likelihood from a fitted augSIMEX object
+This function outputs the likelihood from a fitted augSIMEX object
 }
 \usage{
 ## S3 method for class 'augSIMEX'
