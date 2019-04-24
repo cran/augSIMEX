@@ -18,6 +18,7 @@ importFrom("stats", "binomial", "coef", "contrasts", "cov", "formula",
              "rnorm", "sd", "symnum", "var")
 importFrom("stats", ".getXlevels", "family", "model.frame", "na.pass",
              "napredict", "naresid", "predict.lm", "na.omit", "complete.cases")
+import(nleqslv)
 import(rootSolve)
 import(MASS)
 S3method(summary, augSIMEX)
@@ -28,6 +29,8 @@ S3method(predict, augSIMEX)
 S3method(residuals, augSIMEX)
 S3method(vcov, augSIMEX)
 S3method(print, summary.augSIMEX)
+
+
 
 
 

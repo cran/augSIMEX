@@ -25,10 +25,10 @@ NumericMatrix scoreprobit(NumericVector beta, NumericVector Y, NumericMatrix Dat
       eta += beta(j)*DataM(i,j);
     }
     eta+=offset(i);
-    pdf = R::pnorm(eta,0,1,TRUE,FALSE);
-    cdf = R::dnorm(eta,0,1,FALSE);
+    cdf = R::pnorm(eta,0,1,TRUE,FALSE);
+    pdf = R::dnorm(eta,0,1,FALSE);
     for (j = 0; j < ncol; ++j){
-      out(i,j)=weight(i)*(Y(i)-pdf)/(pdf*(1-pdf))*cdf*DataM(i,j);
+      out(i,j)=weight(i)*(Y(i)-cdf)/(cdf*(1-cdf))*pdf*DataM(i,j);
     }
   }
   

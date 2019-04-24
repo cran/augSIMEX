@@ -2,8 +2,8 @@ Package: augSIMEX
 Type: Package
 Title: Analysis of Data with Mixed Measurement Error and
         Misclassification in Covariates
-Version: 3.1
-Date: 2018-11-04
+Version: 3.7.2
+Date: 2019-04-24
 Author: Qihuang Zhang <qihuang.zhang@uwaterloo.ca>, Grace Y. Yi <yyi@uwaterloo.ca>
 Maintainer: Qihuang Zhang <qihuang.zhang@uwaterloo.ca>
 Description: Implementation of the augmented
@@ -12,9 +12,10 @@ Description: Implementation of the augmented
             function provides a similar summary output as that of glm() function. Both parametric and
             empirical SIMEX are considered in the package.
 License: GPL (>= 2)
-Imports: Rcpp (>= 0.12.11), MASS, rootSolve, stats, graphics, Formula
+Imports: Rcpp (>= 0.12.11), MASS, rootSolve, stats, graphics, Formula,
+        nleqslv
 LinkingTo: Rcpp
 NeedsCompilation: yes
-Packaged: 2018-11-05 19:40:00 UTC; Qihuang
+Packaged: 2019-04-24 14:51:49 UTC; Qihuang
 Repository: CRAN
-Date/Publication: 2018-11-05 20:00:07 UTC
+Date/Publication: 2019-04-24 22:40:06 UTC

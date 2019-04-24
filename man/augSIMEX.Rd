@@ -7,12 +7,15 @@ Analysis of Data with Mixed Measurement Error and Misclassification in Covariate
 Implementation of the SIMEX algorithm for data with mixed measurement error and misclassification in covariates.
 }
 \usage{
-augSIMEX(mainformula = formula(data), mismodel = pi|qi~1, meformula = NULL, 
-    family = gaussian, data, validationdata,
-    err.var, mis.var, err.true, mis.true, err.mat = NULL, cppmethod = TRUE,
-    repeated = FALSE, repind = list(),
-    subset,  offset, weights, na.action, scorefunction=NULL,
-    lambda = NULL, M = 5, B = 20, nBoot = 50, extrapolation = c("quadratic","linear"),...)
+augSIMEX(mainformula = formula(data), mismodel = pi | qi ~ 1,
+                 meformula = NULL, family = gaussian, data,
+                 validationdata, err.var, mis.var, err.true, mis.true,
+                 err.mat = NULL, cppmethod = TRUE, repeated = FALSE,
+                 repind = list(), subset, offset, weights, na.action,
+                 scorefunction = NULL, lambda = NULL, M = 5, B = 20,
+                 nBoot = 50, extrapolation = c("quadratic", "linear"),
+                 solvefun = c("rootSolve", "nleqslv"), bound = 8,
+                 initial = NULL, ...)
 }
 \arguments{
   \item{mainformula}{
@@ -88,6 +91,13 @@ the number of the iterations repeated in bootstrap. The default value is set to 
   \item{extrapolation}{
 specifies the regression model that involves in the extrapolation step. The options include ``linear'' and ``quadratic''. The default is set to be ``quadratic''.
 }
+  \item{solvefun}{ a charater indicating which solving function will be used to solve the modified score equations. The default choice is ``rootSolve'' package. The user can also choose ``nleqslv'' package.
+
+}  
+  \item{bound}{ a value or vector specififying the bound for the absolute value of the regression coefficients. During the simulation, the parameters out of bound will be filter out before extrapolation step.
+  }
+  \item{initial}{ the initial value of the parameters.
+  }
   \item{\dots}{
 other arguments that pass into the function.
 }

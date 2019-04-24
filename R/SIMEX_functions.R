@@ -17,7 +17,7 @@ extrapolate <- function (extrapolation,betamatrix,lambda,nbeta){
   } else if (extrapolation=="both"){
     extrapomodel1<-apply(betamatrix,MARGIN=2, FUN=function(x){
       lambda2<-lambda^2
-      model<-lm(x~lambda+lambda2)
+      model<-lm(x~lambda+lambda2,na.action=na.omit)
       newdata<-data.frame(lambda=-1,lambda2=1)
       betaresults<-predict(model,newdata)
     })
@@ -48,7 +48,8 @@ fastapproach<-function(family,cpp){
       if (family$link=="cloglog") {return(list(scorefun=scorecloglogcpp,fast=TRUE))}
     }
     if (family$family=="poisson"){
-      if (family$link=="log") {return(list(scorefun=scorelogitcpp,fast=TRUE))}
+      if (family$link=="sqrt") {return(list(scorefun=scorepoisqrtcpp,fast=TRUE))}
+      return(list(scorefun=scorepoilogcpp,fast=TRUE))
     }
   }
   return(list(scorefun=score.modifiedglm,fast=FALSE))

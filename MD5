@@ -1,8 +1,8 @@
-b2041d05db8c5f7d62d866dda6adc394 *DESCRIPTION
-60b003af10a7341668e4c0fa5f832ffe *NAMESPACE
+6cd1e7cf1970d257bbba663da474857d *DESCRIPTION
+be3006d0ea6b05cf0f8549ad0e4bf985 *NAMESPACE
 a5c390072c563e528ddd982487142ce6 *R/RcppExports.R
-fd290ae86369d43b27b5a6e8db9d87a4 *R/SIMEX_functions.R
-dde73cc1eec837ebd1e4b0cc05296bae *R/augSIMEX.R
+b2c9b7b8f9039e7440a892e51127e941 *R/SIMEX_functions.R
+7507020ed5a2803143a073bcec3ec373 *R/augSIMEX.R
 986475a63309213d7ed13e80a2878305 *R/coef.augSIMEX.R
 b08e4f9a86acd52fad11c2e68bfbc5b8 *R/glmscore.R
 9e4d8e622177103e792801be0791aee2 *R/logLik.augSIMEX.R
@@ -26,7 +26,7 @@ b68a632a8c032f555c7d396a630429ee *data/ToyMult.rda
 e7dc067a7e99916db1b9df8125238001 *man/ToyRepeat.Rd
 de770896dabfbd230c228d092111573d *man/ToyUni.Rd
 c2e231b7a5c91b4bcb3fff72b7614f5e *man/augSIMEX-package.Rd
-8fc30fe3f879baf601d6cefaaf600c21 *man/augSIMEX.Rd
+b30f6998632a8105d9cdc9072b69037c *man/augSIMEX.Rd
 3f15974e32187842f9bc3f2edb195ef0 *man/coef.augSIMEX.Rd
 672fc566c32460d23ca9c21fcab22e7e *man/glmscore.Rd
 903ed3c62929ccfa63cde71eb0b5f6fd *man/logLik.augSIMEX.Rd
@@ -38,9 +38,9 @@ f27f1fae6b58446341eb2173debb9352 *man/vcov.augSIMEX.Rd
 c1ea479656fab58f9cc61ef69a6f2767 *src/RcppExports.cpp
 03b5eae443abc5203de21a5031b6d0f2 *src/repeatgenerate.cpp
 5ad4e117e39ba938c30f672540883101 *src/scorecloglogcpp.cpp
-dd6feab3d9d9830d8d2224c4b52f906e *src/scoregaussiancpp.cpp
-90626bccdb19eff1d7fb10f5b47e4c1a *src/scorelogitcpp.cpp
+368ed9092f85470311c3fdae42589339 *src/scoregaussiancpp.cpp
+63d810b6eb124d93f330c81c5ad24298 *src/scorelogitcpp.cpp
 cc44bf733ae49fa099e83ebf57b09fa8 *src/scoremodifiedglmcpp.cpp
 2034e0834d1bfc49a0e0e754d08bc4a9 *src/scorepoilogcpp.cpp
 3853f2d68fbb184b8f914d787376a2df *src/scorepoisqrtcpp.cpp
-e285307cdc998d49647a7294523b99a6 *src/scoreprobitcpp.cpp
+c35a1043de19645f20ddb5d830114426 *src/scoreprobitcpp.cpp
