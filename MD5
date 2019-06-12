@@ -1,4 +1,4 @@
-6cd1e7cf1970d257bbba663da474857d *DESCRIPTION
+43c116b51c213cc949074998f0e6b7a4 *DESCRIPTION
 be3006d0ea6b05cf0f8549ad0e4bf985 *NAMESPACE
 a5c390072c563e528ddd982487142ce6 *R/RcppExports.R
 b2c9b7b8f9039e7440a892e51127e941 *R/SIMEX_functions.R
@@ -20,6 +20,7 @@ b9fa47350d0ffc400532afdc49422a37 *data/GeneRepeat.rda
 b68a632a8c032f555c7d396a630429ee *data/ToyMult.rda
 6776e9c8e9efcbded4dbc3d43d8f58f6 *data/ToyRepeat.rda
 66c5b78a69854d96edf6adfe61f995f5 *data/ToyUni.rda
+fbf9973a5da3023d338aa53d9857db30 *inst/CITATION
 65775a849f607e28c03896de16b43723 *man/GeneRepeat.Rd
 7117db2d0ea09fb54dc8c1bb79abe0cb *man/GeneUni.Rd
 9c8bb0404e283255c52408540d2d0327 *man/ToyMult.Rd
