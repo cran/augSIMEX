@@ -4,7 +4,7 @@ augSIMEX<-function(mainformula = formula(data), mismodel = pi|qi~1, meformula = 
                    repeated = FALSE, repind=list(),
                    subset,  offset, weights, na.action, scorefunction=NULL,
                    lambda = NULL, M = 5, B = 20, nBoot = 50, extrapolation = c("quadratic","linear"),
-                   solvefun = c("rootSolve","nleqslv"), bound = 8, initial = NULL,...)
+                   bound = 8, initial = NULL,...)
 
 { call <- match.call()
 
@@ -183,7 +183,6 @@ augSIMEX<-function(mainformula = formula(data), mismodel = pi|qi~1, meformula = 
   }
 
   # extrapolation<-match.arg(extrapolation)
-  solvefun <- match.arg(solvefun)
 
   ### Step 1: Simulation step
   temp.Results1<-Getalpha(validationdata,as.Formula(mismodel),mis.var,mis.true,err.var)
@@ -266,20 +265,12 @@ augSIMEX<-function(mainformula = formula(data), mismodel = pi|qi~1, meformula = 
       DataM0 <- cbind(X.impute,Wmatrix,rep(0,nsize))
       DataM1 <- cbind(X.impute,Wmatrix,rep(1,nsize))
 
-      
-      if (solvefun == "rootSolve"){
-        if (is.null(scorefunction)){
-          if (cppmethod) {betasolve<-multiroot(scorefun,initialv,Y=Response,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights,offset=offset)}
-          else {betasolve<-multiroot(scorefun,initialv,Y=Response,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights,offset=offset,linkinv=linkinv,var=variance,mueta=mu.eta)}
-        } else {betasolve<-multiroot(scorefun,initialv,Y=Response,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights,offset=offset,sfun=sfun)}
-        betareturn <- betasolve$root
-      } else {
-        if (is.null(scorefunction)){
+      if (is.null(scorefunction)){
           if (cppmethod) {betasolve<-nleqslv(initialv,scorefun,Y=Response,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights,offset=offset)}
           else {betasolve<-nleqslv(initialv,scorefun,Y=Response,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights,offset=offset,linkinv=linkinv,var=variance,mueta=mu.eta)}
-        } else {betasolve<-nleqslv(initialv,scorefun,Y=Response,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights,offset=offset,sfun=sfun)}
-        betareturn <- betasolve$x
-      }
+      } else {betasolve<-nleqslv(initialv,scorefun,Y=Response,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights,offset=offset,sfun=sfun)}
+      betareturn <- betasolve$x
+      
       
 
       if (any(abs(betareturn)>bound, na.rm = T)) { return(rep(NA,nbeta*2))}
@@ -324,20 +315,13 @@ augSIMEX<-function(mainformula = formula(data), mismodel = pi|qi~1, meformula = 
         DataM1 <- cbind(X.impute,Wmatrix_b,rep(1,nsize))
         options(warn=0)
         
-        if (solvefun == "rootSolve"){
-          if (is.null(scorefunction)){
-            if (cppmethod) {betasolve<-multiroot(scorefun,initialv,Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot])}
-            else {betasolve<-multiroot(scorefun,initialv,Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot],linkinv=linkinv,var=variance,mueta=mu.eta)}
-          } else {betasolve<-multiroot(scorefun,initialv,Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot],sfun=sfun)}
-          betareturn <- betasolve$root
-        } else {
-          if (is.null(scorefunction)){
+        
+        if (is.null(scorefunction)){
             if (cppmethod) {betasolve<-nleqslv(initialv,scorefun,Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot])}
             else {betasolve<-nleqslv(initialv,scorefun,Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot],linkinv=linkinv,var=variance,mueta=mu.eta)}
-          } else {betasolve<-nleqslv(initialv,scorefun,Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot],sfun=sfun)}
-          betareturn <- betasolve$x
-        }
-                
+        } else {betasolve<-nleqslv(initialv,scorefun,Y=Response_b,DataM=DataM,DataM0=DataM0,DataM1=DataM1,phat=phat0,qhat=qhat0,weight=weights[sample.boot],offset=offset[sample.boot],sfun=sfun)}
+        betareturn <- betasolve$x
+        
         if (any(abs(betareturn)>bound,na.rm=T)) { return(rep(NA,nbeta*2))}
         
         return(betareturn)
